@@ -9,7 +9,3 @@ export interface MenuItem {
     alt: string;
   };
 }
-
-export interface HeaderProps {
-  // Add any props you might need
-}

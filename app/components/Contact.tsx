@@ -3,13 +3,13 @@
 import Link from 'next/link';
 
 // Types
-interface ContactInfo {
+export interface ContactInfo {
   address: string[];
   phone?: string;
   email?: string;
 }
 
-interface ContactSectionProps {
+export interface ContactSectionProps {
   title: string;
   description: string;
   contactInfo: ContactInfo;
