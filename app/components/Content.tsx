@@ -6,10 +6,13 @@ import Image from 'next/image';
 
 // Types for Gallery Items
 interface GalleryItem {
-  image: string;
+  type: 'image' | 'video';
+  src: string;
   title: string;
   description: string;
   category?: string;
+  poster?: string; // Optional poster image for videos
+  alt?: string; // Optional alt text for images
 }
 
 interface ContentProps {
@@ -22,7 +25,7 @@ interface ContentProps {
   hoverImage?: string;
   className?: string;
   gallery?: GalleryItem[];
-  compact?: boolean; // New prop for compact mode
+  compact?: boolean;
 }
 
 export const Content = ({
@@ -38,20 +41,38 @@ export const Content = ({
   compact = false,
 }: ContentProps) => {
   const bgRef = useRef<HTMLDivElement>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [imageLoadError, setImageLoadError] = useState<boolean[]>([]);
+  const [mediaLoadError, setMediaLoadError] = useState<boolean[]>([]);
+  const [isVideoPlaying, setIsVideoPlaying] = useState<boolean[]>([]);
+
+  // Initialize video playing states
+  useEffect(() => {
+    if (gallery.length > 0) {
+      setMediaLoadError(new Array(gallery.length).fill(false));
+      setIsVideoPlaying(new Array(gallery.length).fill(false));
+    }
+  }, [gallery]);
 
   // Auto-advance carousel
   useEffect(() => {
     if (!isAutoPlaying || gallery.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % gallery.length);
-    }, 4000);
+      // Stop current video if playing
+      if (gallery[currentMediaIndex].type === 'video' && isVideoPlaying[currentMediaIndex]) {
+        videoRefs.current[currentMediaIndex]?.pause();
+        const newVideoPlaying = [...isVideoPlaying];
+        newVideoPlaying[currentMediaIndex] = false;
+        setIsVideoPlaying(newVideoPlaying);
+      }
+      
+      setCurrentMediaIndex((prev) => (prev + 1) % gallery.length);
+    }, gallery[currentMediaIndex].type === 'video' ? 10000 : 4000); // Longer duration for videos
 
     return () => clearInterval(interval);
-  }, [gallery.length, isAutoPlaying]);
+  }, [gallery.length, isAutoPlaying, currentMediaIndex, gallery, isVideoPlaying]);
 
   // Parallax effect
   useEffect(() => {
@@ -74,30 +95,82 @@ export const Content = ({
     };
   }, []);
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % gallery.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
-  };
-
-  const goToImage = (index: number) => {
-    setCurrentImageIndex(index);
-  };
-
-  const handleImageError = (index: number) => {
-    const newErrors = [...imageLoadError];
-    newErrors[index] = true;
-    setImageLoadError(newErrors);
-  };
-
-  // Function to get the current image source with fallback
-  const getImageSrc = (index: number) => {
-    if (imageLoadError[index] || !gallery[index]?.image) {
-      return '/images/placeholders/apparel-placeholder.jpg';
+  const nextMedia = () => {
+    // Stop current video if playing
+    if (gallery[currentMediaIndex].type === 'video' && isVideoPlaying[currentMediaIndex]) {
+      videoRefs.current[currentMediaIndex]?.pause();
+      const newVideoPlaying = [...isVideoPlaying];
+      newVideoPlaying[currentMediaIndex] = false;
+      setIsVideoPlaying(newVideoPlaying);
     }
-    return gallery[index].image;
+    
+    setCurrentMediaIndex((prev) => (prev + 1) % gallery.length);
+  };
+
+  const prevMedia = () => {
+    // Stop current video if playing
+    if (gallery[currentMediaIndex].type === 'video' && isVideoPlaying[currentMediaIndex]) {
+      videoRefs.current[currentMediaIndex]?.pause();
+      const newVideoPlaying = [...isVideoPlaying];
+      newVideoPlaying[currentMediaIndex] = false;
+      setIsVideoPlaying(newVideoPlaying);
+    }
+    
+    setCurrentMediaIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
+  };
+
+  const goToMedia = (index: number) => {
+    // Stop current video if playing
+    if (gallery[currentMediaIndex].type === 'video' && isVideoPlaying[currentMediaIndex]) {
+      videoRefs.current[currentMediaIndex]?.pause();
+      const newVideoPlaying = [...isVideoPlaying];
+      newVideoPlaying[currentMediaIndex] = false;
+      setIsVideoPlaying(newVideoPlaying);
+    }
+    
+    setCurrentMediaIndex(index);
+  };
+
+  const handleMediaError = (index: number) => {
+    const newErrors = [...mediaLoadError];
+    newErrors[index] = true;
+    setMediaLoadError(newErrors);
+  };
+
+  const toggleVideoPlay = (index: number) => {
+    if (!gallery[index] || gallery[index].type !== 'video') return;
+    
+    const video = videoRefs.current[index];
+    if (!video) return;
+
+    const newVideoPlaying = [...isVideoPlaying];
+    
+    if (video.paused) {
+      video.play();
+      newVideoPlaying[index] = true;
+    } else {
+      video.pause();
+      newVideoPlaying[index] = false;
+    }
+    
+    setIsVideoPlaying(newVideoPlaying);
+  };
+
+  const handleVideoEnded = (index: number) => {
+    const newVideoPlaying = [...isVideoPlaying];
+    newVideoPlaying[index] = false;
+    setIsVideoPlaying(newVideoPlaying);
+  };
+
+  // Function to get the fallback image source
+  const getFallbackSrc = () => '/images/placeholders/apparel-placeholder.jpg';
+
+  // Function to get the current media source
+  const getMediaSrc = (index: number) => {
+    if (mediaLoadError[index] || !gallery[index]?.src) {
+      return getFallbackSrc();
+    }
+    return gallery[index].src;
   };
 
   // Determine section padding based on compact mode
@@ -162,7 +235,7 @@ export const Content = ({
             </div>
           </div>
 
-          {/* Image Gallery */}
+          {/* Media Gallery */}
           <div className={`${alignment === 'right' ? 'lg:col-start-1' : ''}`}>
             {gallery.length > 0 ? (
               <div 
@@ -170,64 +243,120 @@ export const Content = ({
                 onMouseEnter={() => setIsAutoPlaying(false)}
                 onMouseLeave={() => setIsAutoPlaying(true)}
               >
-                {/* Main Gallery Image */}
+                {/* Main Gallery Media */}
                 <div className="relative aspect-[4/3] w-full">
                   {gallery.map((item, index) => (
                     <div
                       key={index}
                       className={`absolute inset-0 transition-all duration-500 ease-in-out ${
-                        index === currentImageIndex
+                        index === currentMediaIndex
                           ? 'opacity-100 scale-100'
                           : 'opacity-0 scale-105'
                       }`}
                     >
-                      {/* Image with error handling */}
-                      {getImageSrc(index).startsWith('/') ? (
-                        <Image
-                          src={getImageSrc(index)}
-                          alt={item?.title || `Gallery image ${index + 1}`}
-                          fill
-                          className="object-cover transition-transform duration-700 hover:scale-105"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-                          onError={() => handleImageError(index)}
-                          priority={index === 0}
-                        />
+                      {/* Video Media */}
+                      {item.type === 'video' ? (
+                        <div className="relative w-full h-full">
+                          <video
+                            ref={(el) => {
+                              videoRefs.current[index] = el;
+                            }}
+                            src={getMediaSrc(index)}
+                            poster={item.poster || getFallbackSrc()}
+                            className="w-full h-full object-cover"
+                            controls={false}
+                            muted
+                            loop={false}
+                            onEnded={() => handleVideoEnded(index)}
+                            onError={() => handleMediaError(index)}
+                            playsInline
+                          />
+                          {/* Video Controls Overlay */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            {!isVideoPlaying[index] && (
+                              <button
+                                onClick={() => toggleVideoPlay(index)}
+                                className="w-16 h-16 lg:w-20 lg:h-20 bg-background/90 hover:bg-background rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm border border-soft-sage hover:scale-110 shadow-2xl group z-10"
+                                aria-label="Play video"
+                              >
+                                <svg className="w-8 h-8 lg:w-10 lg:h-10 text-forest-emerald group-hover:text-muted-gold transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z" />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
+                          {/* Video Play/Pause Indicator */}
+                          <div className="absolute top-4 left-4 z-10">
+                            <div className="px-3 py-1 bg-background/90 backdrop-blur-sm rounded-full flex items-center space-x-2 text-xs font-medium">
+                              <svg className="w-4 h-4 text-forest-emerald" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                              </svg>
+                              <span className="text-foreground">Video</span>
+                            </div>
+                          </div>
+                        </div>
                       ) : (
-                        // Fallback for external images using regular img tag
-                        <img
-                          src={getImageSrc(index)}
-                          alt={item?.title || `Gallery image ${index + 1}`}
-                          className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                          onError={() => handleImageError(index)}
-                        />
+                        /* Image Media */
+                        <div className="relative w-full h-full">
+                          {getMediaSrc(index).startsWith('/') ? (
+                            <Image
+                              src={getMediaSrc(index)}
+                              alt={item.alt || item.title || `Gallery image ${index + 1}`}
+                              fill
+                              className="object-cover transition-transform duration-700 hover:scale-105"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                              onError={() => handleMediaError(index)}
+                              priority={index === 0}
+                            />
+                          ) : (
+                            // Fallback for external images using regular img tag
+                            <img
+                              src={getMediaSrc(index)}
+                              alt={item.alt || item.title || `Gallery image ${index + 1}`}
+                              className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                              onError={() => handleMediaError(index)}
+                            />
+                          )}
+                          {/* Image Type Indicator */}
+                          <div className="absolute top-4 left-4 z-10">
+                            <div className="px-3 py-1 bg-background/90 backdrop-blur-sm rounded-full flex items-center space-x-2 text-xs font-medium">
+                              <svg className="w-4 h-4 text-forest-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <span className="text-foreground">Image</span>
+                            </div>
+                          </div>
+                        </div>
                       )}
                       
-                      {/* Enhanced Image Overlay with Description */}
+                      {/* Enhanced Media Overlay with Description */}
                       <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent flex items-end transition-all duration-500">
                         <div className="p-4 lg:p-6 text-white w-full transform transition-transform duration-500 hover:translate-y-1">
                           <div className="flex items-start justify-between mb-2 lg:mb-3">
                             <h3 className="text-lg sm:text-xl lg:text-2xl font-bold flex-1 leading-tight">
-                              {item?.title || `Gallery ${index + 1}`}
+                              {item.title || `Gallery ${index + 1}`}
                             </h3>
-                            {item?.category && (
+                            {item.category && (
                               <span className="badge badge--premium ml-2 flex-shrink-0 text-xs">
                                 {item.category}
                               </span>
                             )}
                           </div>
                           <p className="text-soft-sage font-medium text-sm leading-relaxed line-clamp-2">
-                            {item?.description || 'Premium collection'}
+                            {item.description || 'Premium collection'}
                           </p>
                           
-                          {/* Progress indicator for current image */}
-                          {index === currentImageIndex && (
+                          {/* Progress indicator for current media */}
+                          {index === currentMediaIndex && (
                             <div className="flex items-center space-x-2 mt-2 lg:mt-3">
                               <div className="flex-1 bg-soft-sage/30 rounded-full h-1">
                                 <div 
                                   className="bg-gradient-to-r from-forest-emerald to-muted-gold h-1 rounded-full transition-all duration-100"
                                   style={{
                                     width: isAutoPlaying ? '100%' : '0%',
-                                    animation: isAutoPlaying ? 'progressBar 4s linear forwards' : 'none'
+                                    animation: isAutoPlaying 
+                                      ? `progressBar ${gallery[index].type === 'video' ? '10s' : '4s'} linear forwards` 
+                                      : 'none'
                                   }}
                                 />
                               </div>
@@ -246,18 +375,18 @@ export const Content = ({
                 {gallery.length > 1 && (
                   <>
                     <button
-                      onClick={prevImage}
+                      onClick={prevMedia}
                       className="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 w-8 h-8 lg:w-12 lg:h-12 bg-background/90 hover:bg-background text-foreground rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm border border-soft-sage hover:scale-110 shadow-lg z-20 hover:shadow-xl group btn--ghost"
-                      aria-label="Previous image"
+                      aria-label="Previous media"
                     >
                       <svg className="w-4 h-4 lg:w-6 lg:h-6 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
                     <button
-                      onClick={nextImage}
+                      onClick={nextMedia}
                       className="absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 w-8 h-8 lg:w-12 lg:h-12 bg-background/90 hover:bg-background text-foreground rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm border border-soft-sage hover:scale-110 shadow-lg z-20 hover:shadow-xl group btn--ghost"
-                      aria-label="Next image"
+                      aria-label="Next media"
                     >
                       <svg className="w-4 h-4 lg:w-6 lg:h-6 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -272,22 +401,26 @@ export const Content = ({
                     {gallery.map((item, index) => (
                       <button
                         key={index}
-                        onClick={() => goToImage(index)}
+                        onClick={() => goToMedia(index)}
                         className={`group relative transition-all duration-300 ${
-                          index === currentImageIndex
+                          index === currentMediaIndex
                             ? 'scale-110 lg:scale-125'
                             : 'hover:scale-105 lg:hover:scale-110'
                         }`}
-                        aria-label={`View ${item?.title}`}
+                        aria-label={`View ${item.title}`}
                       >
                         <div className={`w-2 h-2 lg:w-3 lg:h-3 rounded-full transition-all duration-300 ${
-                          index === currentImageIndex
-                            ? 'bg-background shadow-lg'
-                            : 'bg-background/60 hover:bg-background/80'
+                          index === currentMediaIndex
+                            ? item.type === 'video'
+                              ? 'bg-blue-500 shadow-lg'
+                              : 'bg-background shadow-lg'
+                            : item.type === 'video'
+                              ? 'bg-blue-500/60 hover:bg-blue-500/80'
+                              : 'bg-background/60 hover:bg-background/80'
                         }`} />
                         {/* Tooltip on hover - hidden on mobile */}
                         <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-charcoal text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none hidden lg:block">
-                          {item?.title}
+                          {item.title} ({item.type})
                         </div>
                       </button>
                     ))}
@@ -327,14 +460,22 @@ export const Content = ({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <p className="text-foreground font-semibold text-base lg:text-body-large mb-1 lg:mb-2">Image Gallery</p>
-                  <p className="text-soft-sage text-xs lg:text-caption">Add gallery items to showcase your content</p>
+                  <p className="text-foreground font-semibold text-base lg:text-body-large mb-1 lg:mb-2">Media Gallery</p>
+                  <p className="text-soft-sage text-xs lg:text-caption">Add images or videos to showcase your content</p>
                 </div>
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* CSS Animation for progress bar */}
+      <style jsx>{`
+        @keyframes progressBar {
+          from { width: 0%; }
+          to { width: 100%; }
+        }
+      `}</style>
     </section>
   );
 };
