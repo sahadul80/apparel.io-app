@@ -6,18 +6,17 @@ export default function Home() {
   return (
     <>
       <Hero 
-        title={'Your Global, Local Partner for Sustainable Apparel'} 
-        content={'We offer sustainable apparel product development and specialised global sourcing strategies, combined with compliance excellence and intuitive customer service. We strive to always bring newness and innovation to our work, offering an extensive multi-category product range, manufactured in over 100 fully compliant partner factories.'} 
-        buttonText={'Products & Services'} 
-        buttonLink={'/products-and-services'} 
+        title={'This Resource Is Currently Under Construction'} 
+        content={'All the data are dummy; and for evaluation & Feedback purpuses.'} 
+        buttonText={'Products Divisions'} 
+        buttonLink={'/products-division'} 
         stats={[
-          {number:"140",label:"Partner Factories"},
-          {number:"5",label:"Regional Offices"},
-          {number:"800",label:"Global Team Members"},
-          {number:"20",label:"Global Recognitions"}
+          {number:"144",label:"Partner Factories"},
+          {number:"4",label:"Regional Offices"},
+          {number:"850",label:"Global Team Members"},
+          {number:"16",label:"Global Recognitions"}
         ]}
       />
-      <ProductCollection />
     </>
   )
 }

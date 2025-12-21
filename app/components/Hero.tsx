@@ -52,13 +52,13 @@ export const Hero = ({ title, content, buttonText, buttonLink, stats }: HeroProp
   }, []);
 
   return (
-    <section className="section-sm relative min-h-screen overflow-hidden flex items-center justify-center bg-gradient-apparelio">
+    <section className="section-md relative min-h-screen overflow-hidden flex items-center justify-center bg-gradient-apparelio">
       {/* Background Elements */}
       <FloatingBackground />
       
       {/* Main Content */}
       <div className="container mx-auto relative z-20">
-        <div className={`grid grid-cols-1 lg:grid-cols-2 items-center transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className={`grid grid-cols-1 items-center transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           
           {/* Text Content */}
           <div className="flex flex-col items-center sm:gap-4 text-center">
@@ -115,19 +115,23 @@ export const Hero = ({ title, content, buttonText, buttonLink, stats }: HeroProp
             </div>
           </div>
           {/* Stats Cards - Desktop */}
-          <div className="grid grid-cols-2 gap-2">
-            {stats.map((card, index) => (
-              <div 
-                key={index} 
-                className={`animate-fade-in-up ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                style={{ animationDelay: `${800 + index * 150}ms` }}
-              >
-                <StatCard number={card.number} label={card.label} />
-              </div>
-            ))}
+          <div className="flex flex-row items-center justify-center gap-2">
+            <div className="w-1/2">
+              <ApparelCarousel />
+            </div>
+            <div className="w-1/2 grid grid-cols-2 grid-rows-2">
+              {stats.map((card, index) => (
+                <div 
+                  key={index} 
+                  className={`animate-fade-in-up ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  style={{ animationDelay: `${800 + index * 150}ms` }}
+                >
+                  <StatCard number={card.number} label={card.label} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <ApparelCarousel />
       </div>
     </section>
   );
