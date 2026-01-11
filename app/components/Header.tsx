@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import ProductModal from './productModal';
 import ReactDOM from 'react-dom';
-import { GripIcon, Heart, X } from 'lucide-react';
+import { GripIcon, Heart, HomeIcon, X } from 'lucide-react';
 import ApparelCarousel from './carousel';
 
 // Types
@@ -136,6 +136,11 @@ const ContactIcon = () => (
 // Menu Data with Icons
 const menuData: MenuItem[] = [
   {
+    href: "/",
+    label: "Home",
+    icon: <HomeIcon />
+  },
+  {
     href: "/our-group",
     label: "Our Group",
     icon: <GroupIcon />
@@ -205,11 +210,6 @@ const menuData: MenuItem[] = [
     href: "/our-promise",
     label: "Our Promise",
     icon: <PromiseIcon />
-  },
-  {
-    href: "/global-locations",
-    label: "Global Locations",
-    icon: <LocationIcon />
   },
   {
     href: "/newsfeed",

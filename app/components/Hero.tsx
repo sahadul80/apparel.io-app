@@ -52,23 +52,23 @@ export const Hero = ({ title, content, buttonText, buttonLink, stats }: HeroProp
   }, []);
 
   return (
-    <section className="section-md relative min-h-screen overflow-hidden flex items-center justify-center bg-gradient-apparelio">
+    <section className="section-md relative min-h-screen overflow-hidden flex items-center justify-center">
       {/* Background Elements */}
       <FloatingBackground />
       
       {/* Main Content */}
       <div className="container mx-auto relative z-20">
-        <div className={`grid grid-cols-1 items-center transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className={`grid grid-cols-2 items-center justify-center transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           
           {/* Text Content */}
-          <div className="flex flex-col items-center sm:gap-4 text-center">
+          <div className="flex flex-col items-center sm:gap-4 text-start">
             <div className="heading-container">
               <h1 className="text-heading font-bold text-foreground leading-tight tracking-tight">
                 <div 
                   className="animate-fade-in-up" 
                   style={{ animationDelay: '200ms' }}
                   dangerouslySetInnerHTML={{ 
-                    __html: title.replace(/\n/g, '<br>') 
+                    __html: title.replace(/\n/g, '<br></br>') 
                   }} 
                 />
               </h1>
@@ -87,7 +87,7 @@ export const Hero = ({ title, content, buttonText, buttonLink, stats }: HeroProp
               ))}
             </div>
 
-            <div className="btn-group flex items-center justify-center gap-4">
+            <div className="btn-group flex items-center justify-end gap-4">
               <div 
                 className={`animate-fade-in-up ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 style={{ animationDelay: '600ms' }}
@@ -115,11 +115,8 @@ export const Hero = ({ title, content, buttonText, buttonLink, stats }: HeroProp
             </div>
           </div>
           {/* Stats Cards - Desktop */}
-          <div className="flex flex-row items-center justify-center gap-2">
-            <div className="w-1/2">
-              <ApparelCarousel />
-            </div>
-            <div className="w-1/2 grid grid-cols-2 grid-rows-2">
+          <div className="flex flex-row items-center justify-around gap-2">
+            <div className="grid grid-cols-2 grid-rows-2">
               {stats.map((card, index) => (
                 <div 
                   key={index} 

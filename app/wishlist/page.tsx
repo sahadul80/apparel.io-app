@@ -158,35 +158,6 @@ const WishlistPage = () => {
           </p>
         </motion.div>
 
-        {/* Actions Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="flex flex-col sm:flex-row justify-between items-center mb-8 p-6 bg-white rounded-xl shadow-emerald border border-soft-sage"
-        >
-          <div className="flex items-center space-x-4 mb-4 sm:mb-0">
-            <span className="text-lg font-semibold text-charcoal">
-              Total Value: <span className="text-forest-emerald">TK {calculateTotalPrice().toFixed(2)}</span>
-            </span>
-          </div>
-          
-          <div className="flex space-x-3">
-            <button
-              onClick={handleClearWishlist}
-              className="px-6 py-2 border-2 border-amber-600 text-amber-600 rounded-lg font-medium hover:bg-amber-600 hover:text-white transition-all duration-200"
-            >
-              Clear All
-            </button>
-            <Link
-              href="/products"
-              className="px-6 py-2 bg-forest-emerald text-white rounded-lg font-medium hover:bg-heritage-green transition-colors duration-200 shadow-lg hover:shadow-xl"
-            >
-              Continue Shopping
-            </Link>
-          </div>
-        </motion.div>
-
         {/* Wishlist Items */}
         <motion.div
           variants={containerVariants}
@@ -207,9 +178,9 @@ const WishlistPage = () => {
                   removingItemId === item.id ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
                 }`}
               >
-                <div className="relative">
+                <div className="card--elevated card--interactive overflow-hidden rounded-md backdrop-blur-glass-enhanced border border-soft-sage/50 hover-lift group">
                   {/* Product Image */}
-                  <div className="aspect-square bg-stone-100 relative overflow-hidden">
+                  <div className="relative aspect-product overflow-hidden">
                     {item.image ? (
                       <Image
                         src={item.image}
@@ -248,26 +219,6 @@ const WishlistPage = () => {
                     <h3 className="font-semibold text-charcoal text-lg mb-2 line-clamp-2">
                       {item.name}
                     </h3>
-                    
-                    {/* Price */}
-                    <div className="flex items-center space-x-2 mb-3">
-                      {item.discountedPrice ? (
-                        <>
-                          <span className="text-xl font-bold text-forest-emerald">
-                            TK {item.discountedPrice.toFixed(2)}
-                          </span>
-                          {item.price && item.discountedPrice < item.price && (
-                            <span className="text-sm line-through text-stone-500">
-                              TK {item.price.toFixed(2)}
-                            </span>
-                          )}
-                        </>
-                      ) : (
-                        <span className="text-xl font-bold text-forest-emerald">
-                          TK {item.price?.toFixed(2) || 'N/A'}
-                        </span>
-                      )}
-                    </div>
 
                     {/* Color and Size (if available) */}
                     {(item.color || item.size) && (
@@ -316,7 +267,7 @@ const WishlistPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-12 bg-white rounded-xl shadow-emerald border border-soft-sage p-8"
+          className="mt-12 rounded-xl shadow-emerald p-8"
         >
           <div className="text-center">
             <h3 className="text-2xl font-bold text-charcoal mb-4">Love your wishlist?</h3>
@@ -344,7 +295,7 @@ const WishlistPage = () => {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-16"
         >
-          <h2 className="text-2xl font-bold text-charcoal mb-6 text-center">You Might Also Like</h2>
+          <h2 className="text-2xl font-bold text-charcoal mt-6 text-center">You Might Also Like</h2>
           <ApparelCarousel/>
         </motion.div>
       </div>

@@ -47,41 +47,41 @@
   --color-charcoal-900: #262626;
 
   /* ===== Semantic Color Mapping ===== */
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --border: oklch(0.922 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  --primary: var(--color-heritage-green);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-charcoal);
+  --secondary-foreground: var(--color-white);
+  --accent: var(--color-soft-sage);
+  --accent-foreground: var(--color-charcoal);
+  --muted: var(--color-cream-100);
+  --muted-foreground: var(--color-charcoal-600);
+  --border: var(--color-charcoal-200);
+  --card: var(--color-white);
+  --card-foreground: var(--color-charcoal);
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-charcoal);
+  --destructive: #dc2626;
   --destructive-foreground: var(--color-white);
   --success: var(--color-forest-emerald);
   --warning: var(--color-muted-gold);
   --info: var(--color-soft-sage);
 
   /* ===== Interactive States ===== */
-  --primary-hover: var(--color-heritage-green);
+  --primary-hover: var(--color-forest-emerald);
   --secondary-hover: var(--color-charcoal-800);
-  --accent-hover: var(--color-soft-sage);
+  --accent-hover: #8a9e89;
 
   /* ===== Component Colors ===== */
-  --footer-bg: var(--color-heritage-green);
+  --footer-bg: var(--color-charcoal);
   --footer-text: var(--color-white);
   --footer-border: rgba(255, 255, 255, 0.1);
-  --button-bg: var(--color-forest-emerald);
+  --button-bg: var(--color-heritage-green);
   --button-text: var(--color-white);
-  --button-hover-bg: var(--color-heritage-green);
+  --button-hover-bg: var(--color-forest-emerald);
 
   /* ===== Typography System ===== */
-  --font-heading: 'Montserrat', 'Gotham', system-ui, sans-serif;
-  --font-body: 'Inter', 'Open Sans', system-ui, sans-serif;
+  --font-heading: 'Montserrat', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
 
   /* ===== Enhanced Spacing Scale ===== */
   --space-3xs: 0.125rem;   /* 2px */
@@ -118,23 +118,23 @@
   --shadow-emerald: 0 10px 25px -5px rgba(10, 92, 66, 0.15);
   --shadow-charcoal: 0 10px 25px -5px rgba(38, 38, 38, 0.15);
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: var(--color-white);
+  --foreground: var(--color-charcoal);
+  --input: var(--color-charcoal-100);
+  --ring: var(--color-soft-sage);
+  --chart-1: var(--color-forest-emerald);
+  --chart-2: var(--color-heritage-green);
+  --chart-3: var(--color-soft-sage);
+  --chart-4: var(--color-muted-gold);
+  --chart-5: var(--color-gold-600);
+  --sidebar: var(--color-cream-50);
+  --sidebar-foreground: var(--color-charcoal);
+  --sidebar-primary: var(--color-heritage-green);
+  --sidebar-primary-foreground: var(--color-white);
+  --sidebar-accent: var(--color-cream-100);
+  --sidebar-accent-foreground: var(--color-charcoal);
+  --sidebar-border: var(--color-charcoal-200);
+  --sidebar-ring: var(--color-soft-sage);
 }
 
 /* =============================================
@@ -144,13 +144,13 @@
   :root {
     --primary: var(--color-forest-emerald);
     --primary-foreground: var(--color-white);
-    --secondary: var(--color-soft-sage);
-    --secondary-foreground: var(--color-charcoal);
-    --accent: var(--color-heritage-green);
+    --secondary: var(--color-charcoal-700);
+    --secondary-foreground: var(--color-white);
+    --accent: var(--color-soft-sage);
     --accent-foreground: var(--color-white);
     --muted: var(--color-charcoal-700);
     --muted-foreground: var(--color-soft-sage);
-    --border: var(--color-forest-emerald);
+    --border: var(--color-charcoal-600);
     --card: var(--color-charcoal-800);
     --card-foreground: var(--color-white);
     --popover: var(--color-charcoal-800);
@@ -158,7 +158,13 @@
     --shadow-emerald: 0 10px 25px -5px rgba(10, 92, 66, 0.3);
     --background: var(--color-charcoal-900);
     --foreground: var(--color-white);
-  }
+    --input: var(--color-charcoal-700);
+    --ring: var(--color-forest-emerald);
+    --sidebar: var(--color-charcoal-800);
+    --sidebar-foreground: var(--color-white);
+    --sidebar-primary: var(--color-forest-emerald);
+    --sidebar-accent: var(--color-charcoal-700);
+    --sidebar-border: var(--color-charcoal-600);
 
   /* Dark mode spacing adjustments */
   .card {
@@ -179,6 +185,7 @@
   
   .grid {
     gap: var(--space-lg);
+  }
   }
 }
 
@@ -206,8 +213,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   padding: 0;
-  margin: 0;
-  background-image: url('/apparelio-bg.jpg'); 
+  margin: 0; 
 }
 
 /* =============================================
@@ -699,6 +705,7 @@ h1:last-child, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:la
   display: flex;
   align-items: center;
   min-height: 100vh;
+  
 }
 
 .hero-content {
@@ -707,6 +714,7 @@ h1:last-child, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:la
   margin: 0 auto;
   padding: 0 var(--container-padding);
   text-align: center;
+  background-image: url('/apparel.webp');
 }
 
 .hero-section::before {

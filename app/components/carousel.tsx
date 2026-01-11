@@ -229,7 +229,7 @@ const ApparelCarousel: React.FC<ApparelCarouselProps> = ({
                 </div>
 
                 {displayProducts.length > 0 ? (
-                    <Marquee gradient={false} speed={50} pauseOnHover className="">
+                    <Marquee gradient={false} speed={50} pauseOnHover className="bg-transparent">
                         {displayProducts.map((product) => (
                             <div
                                 key={product.id}
